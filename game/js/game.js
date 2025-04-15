@@ -1,87 +1,124 @@
+// === Canvas Setup ===
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 canvas.width = 800;
 canvas.height = 400;
-let scrollSpeed = -3;
 
-class Player {
-    constructor(x, y, width, height) {
+// === Game State ===
+let scrollOffset = 0;
+let worldSpeed = 3;
+let keys = {};
+let score = 0;
+let money = 0;
+let isPaused = false;
+let isGameOver = false;
+let isEscapePressed = false;
+let isSwordSwinging = false;
+let canSwing = true;
+let difficultyTimer = 0;
+
+// === Classes ===
+class Entity {
+    constructor(x, y, width, height, hp) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.dy = 0; // Vertical velocity
-        this.dx = 0; // Horizontal velocity
-        this.gravity = 0.5; // Gravity effect
-        this.jumpStrength = -10; // Jump velocity
-        this.grounded = false; // Is the player on the ground?
+        this.hp = hp;
+        this.maxHp = hp;
+    }
+
+    drawHealthBar() {
+        const barWidth = this.width;
+        const barHeight = 5;
+        const healthPercent = this.hp / this.maxHp;
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x - scrollOffset, this.y - 10, barWidth, barHeight);
+        ctx.fillStyle = "lime";
+        ctx.fillRect(this.x - scrollOffset, this.y - 10, barWidth * healthPercent, barHeight);
+    }
+
+    draw() {
+        ctx.fillStyle = "blue";
+        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        this.drawHealthBar();
+    }
+}
+
+class Player extends Entity {
+    constructor(x, y, width, height) {
+        super(x, y, width, height, 5);
+        this.dy = 0;
+        this.dx = 0;
+        this.gravity = 0.5;
+        this.jumpStrength = -10;
+        this.grounded = false;
     }
 
     update() {
-        // Apply gravity
-        if (!this.grounded) {
-            this.dy += this.gravity;
-        }
+        if (!this.grounded) this.dy += this.gravity;
 
-        // Update position
         this.y += this.dy;
         this.x += this.dx;
-        this.x += scrollSpeed; // Move left with scroll speed
 
-        // Check for ground collision
-        if (this.y + this.height >= canvas.height) {
-            this.y = canvas.height - this.height;
+        if (this.y + this.height >= canvas.height - 10) {
+            this.y = canvas.height - 10 - this.height;
             this.dy = 0;
             this.grounded = true;
         } else {
             this.grounded = false;
         }
 
-        //handle player go past the left side of the screen
-        if (this.x + this.width < 0) {
-            gameOver(); // Call game over function if player goes off screen
-        }
-
-        // Handle jump
         if ((keys["ArrowUp"] || keys["w"]) && this.grounded) {
             this.dy = this.jumpStrength;
             this.grounded = false;
         }
 
-        // Handle left and right movement
-        if (keys["ArrowLeft"] || keys["a"]) {
-            this.dx = -8;
+        if (keys["ArrowLeft"] || keys["a"] && this.x > 0) {
+            this.dx = -5;
+            if (this.x < scrollOffset + 100 && scrollOffset > 0) {
+                scrollOffset += this.dx;
+                this.dx = 0;
+            }
         } else if (keys["ArrowRight"] || keys["d"]) {
-            this.dx = 8;
+            this.dx = 5;
+            if (this.x > scrollOffset + canvas.width - 400) {
+                scrollOffset += this.dx;
+                this.dx = 0;
+            }
         } else {
             this.dx = 0;
         }
-        
+
+        if (this.hp <= 0) gameOver();
     }
 
     draw() {
         ctx.fillStyle = "blue";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        this.drawHealthBar();
     }
 }
 
-class Obstacle {
-    constructor(x, y, width, height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.gold = Math.floor(Math.random() * 21) + 10; // Random gold between 10 and 30
+class Obstacle extends Entity {
+    constructor(x, y, width, height, hp = 2) {
+        super(x, y, width, height, hp);
+        this.gold = Math.floor(Math.random() * 21) + 10;
     }
 
     update() {
-        this.x += scrollSpeed; // Move obstacle to the left
+        if (this.hp <= 0) {
+            money += this.gold;
+            return false;
+        }
+        return true;
     }
 
     draw() {
         ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        this.drawHealthBar();
     }
 }
 
@@ -90,49 +127,80 @@ class Coin {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.gold = Math.floor(Math.random() * 11) + 5; // Random gold between 5 and 15
+        this.gold = Math.floor(Math.random() * 11) + 5;
     }
 
     update() {
-        this.x += scrollSpeed; // Move coin to the left
+        return (this.x - scrollOffset + this.size > 0);
     }
 
     draw() {
         ctx.fillStyle = "gold";
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.arc(this.x - scrollOffset, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
     }
 }
 
-const player = new Player(canvas.width / 2, canvas.height - 30, 30, 30);
-const coins = []; // Array to store coins
-const obstacles = [];
-let keys = {};
-let score = 0;
-let money = 0; // Total money earned
-let isPaused = false;
-let isEscapePressed = false; // Track if Escape is currently pressed
-let isGameOver = false; // Track if the game is over
-let isSwordSwinging = false; // Track if the sword is being swung
-
-window.addEventListener("keydown", (e) => {
-    keys[e.key] = true;
-    if (e.key === " " || e.key === "Spacebar") {
-        swordAttack(); // only trigger once per keypress
+class Boss extends Entity {
+    constructor(x, y) {
+        const scale = 1 + score / 10000;
+        super(x, y, 60, 80, Math.floor(10 * scale));
+        this.gold = 100;
+        this.attackCooldown = 0;
     }
-});
 
-window.addEventListener("keyup", (e) => (keys[e.key] = false));
+    update() {
+        this.attackCooldown++;
+        if (this.attackCooldown >= 60) {
+            this.attackCooldown = 0;
+            if (checkCollision(this, player)) {
+                player.hp--;
+            }
+        }
 
-// Handle sword attack
-function swordAttack() {
-    isSwordSwinging = true;
-    setTimeout(() => (isSwordSwinging = false), 200); // Sword swing lasts 200ms
+        if (this.hp <= 0) {
+            money += this.gold;
+            return false;
+        }
+        return true;
+    }
+
+    draw() {
+        ctx.fillStyle = "purple";
+        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        this.drawHealthBar();
+    }
 }
 
-// Check if sword hits an obstacle
-function checkSwordCollision(player, obstacle) {
+// === Game Entities ===
+const player = new Player(100, canvas.height - 40, 30, 30);
+const obstacles = [];
+const coins = [];
+const bosses = [];
+
+// === DOM Elements ===
+const scoreDisplay = document.getElementById("scoreDisplay");
+const moneyDisplay = document.getElementById("moneyDisplay");
+const messageDiv = document.getElementById("message");
+
+// === Input Events ===
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+    if ((e.key === " " || e.key === "Spacebar") && canSwing) swordAttack();
+});
+window.addEventListener("keyup", (e) => (keys[e.key] = false));
+
+// === Sword Mechanics ===
+function swordAttack() {
+    if (!canSwing) return;
+    isSwordSwinging = true;
+    canSwing = false;
+    setTimeout(() => (isSwordSwinging = false), 200);
+    setTimeout(() => (canSwing = true), 500);
+}
+
+function checkSwordCollision(entity) {
     const swordRange = 50;
     const swordX = player.x + player.width;
     const swordY = player.y;
@@ -141,175 +209,140 @@ function checkSwordCollision(player, obstacle) {
 
     return (
         isSwordSwinging &&
-        swordX < obstacle.x + obstacle.width &&
-        swordX + swordWidth > obstacle.x &&
-        swordY < obstacle.y + obstacle.height &&
-        swordY + swordHeight > obstacle.y
+        swordX < entity.x + entity.width &&
+        swordX + swordWidth > entity.x &&
+        swordY < entity.y + entity.height &&
+        swordY + swordHeight > entity.y
     );
 }
 
-
-// Spawn obstacles every 2 seconds
-setInterval(() => {
-    if (!isPaused) {
-        const height = Math.random() * 50 + 20; // Random height
-        const y = canvas.height - height; // Position at the bottom
-        const width = Math.random() * 30 + 20; // Random width
-        obstacles.push(new Obstacle(canvas.width, y, width, height));
+// === Game Logic ===
+function update() {
+    difficultyTimer++;
+    if (difficultyTimer % 600 === 0) worldSpeed++;
+    if (score > 0 && score % 10000 === 0 && bosses.length === 0) {
+        bosses.push(new Boss(player.x + 400, canvas.height - 80));
     }
-}, 2000);
 
-// Spawn coins every 3 seconds
-setInterval(() => {
-    if (!isPaused) {
-        const size = Math.random() * 10 + 5; // Random size
-        const x = canvas.width;
-        const y = canvas.height - Math.random() * 100 - size; // Spawn coins near the ground
-        coins.push(new Coin(x, y, size));
-    }
-}, 3000); 
+    player.update();
 
-const scoreDisplay = document.getElementById("scoreDisplay");
-const moneyDisplay = document.getElementById("moneyDisplay");
-const messageDiv = document.getElementById("message");
-
-
-function updateScore() {
-    if (!isPaused) {
-        score += 1; // Increment score over time
-        scoreDisplay.innerText = `Score: ${score}`;
-    }
-}
-
-function updateMoneyDisplay() {
-    moneyDisplay.innerText = `Gold: ${money}`;
-}
-
-function checkCollision(player, obstacle) {
-    return (
-        player.x < obstacle.x + obstacle.width &&
-        player.x + player.width > obstacle.x &&
-        player.y < obstacle.y + obstacle.height &&
-        player.y + player.height > obstacle.y
-    );
-}
-
-function handleCollisions() {
-    obstacles.forEach((obstacle, index) => {
-        if (checkCollision(player, obstacle)) {
-            gameOver();
-        } else if (checkSwordCollision(player, obstacle)) {
-            money += obstacle.gold; // Add obstacle's gold to total money
-            obstacles.splice(index, 1); // Destroy obstacle with sword
-        }
-    });
-}
-
-function handleCoinCollection() {
-    coins.forEach((coin, index) => {
-        if (
-            player.x < coin.x + coin.size &&
-            player.x + player.width > coin.x - coin.size &&
-            player.y < coin.y + coin.size &&
-            player.y + player.height > coin.y - coin.size
-        ) {
-            money += coin.gold; // Add coin's gold to total money
-            coins.splice(index, 1); // Remove the coin
-        }
-    });
-}
-
-function gameOver() {
-    isPaused = true; // Pause the game
-    isGameOver = true; // Mark the game as over
-    messageDiv.innerText = `Game Over! Your score: ${score}`;
-    messageDiv.style.color = "red"; // Change text color to red
-    messageDiv.style.fontSize = "30px"; // Increase font size
-    keys = {}; // Reset keys to prevent further movement
-    // Remove key event listener
-    window.removeEventListener("keydown", (e) => (keys[e.key] = true));
-    money += score / 10;
-}
-
-function updateObstacles() {
     for (let i = obstacles.length - 1; i >= 0; i--) {
-        obstacles[i].update();
-
-        // Remove obstacles that go off-screen
-        if (obstacles[i].x + obstacles[i].width < 0) {
-            obstacles.splice(i, 1);
-        }
+        if (!obstacles[i].update()) obstacles.splice(i, 1);
+        else if (checkSwordCollision(obstacles[i])) obstacles[i].hp--;
+        else if (checkCollision(player, obstacles[i])) player.hp--;
     }
-}
 
-function updateCoins() {
     for (let i = coins.length - 1; i >= 0; i--) {
-        coins[i].update();
-
-        // Remove coins that go off-screen
-        if (coins[i].x + coins[i].size < 0) {
+        if (
+            player.x < coins[i].x + coins[i].size &&
+            player.x + player.width > coins[i].x - coins[i].size &&
+            player.y < coins[i].y + coins[i].size &&
+            player.y + player.height > coins[i].y - coins[i].size
+        ) {
+            money += coins[i].gold;
             coins.splice(i, 1);
         }
     }
-}
 
-function drawObstacles() {
-    obstacles.forEach((obstacle) => obstacle.draw());
-}
-
-function drawCoins() {
-    coins.forEach((coin) => coin.draw());
-}
-
-
-function drawSwordSwing() {
-    if (isSwordSwinging) {
-        ctx.fillStyle = "rgba(255, 255, 0, 0.5)"; // Semi-transparent yellow
-        ctx.fillRect(player.x + player.width, player.y, 50, player.height); // Sword swing area
+    for (let i = bosses.length - 1; i >= 0; i--) {
+        if (!bosses[i].update()) bosses.splice(i, 1);
+        else if (checkSwordCollision(bosses[i])) bosses[i].hp--;
     }
+
+    score++;
 }
 
-function update() {
-    player.update();
-    updateObstacles();
-    updateCoins();
-    handleCollisions();
-    handleCoinCollection(); // Check for coin collection
+function drawBackground() {
+    ctx.fillStyle = "#87CEEB";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#228B22";
+    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+
+    // Add clouds or objects to show scrolling
+    ctx.fillStyle = "white";
+    for (let i = 0; i < 5; i++) {
+        const cloudX = (i * 300 - (scrollOffset % 1500)) % 1500;
+        ctx.beginPath();
+        ctx.arc(cloudX, 50, 20, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBackground();
     player.draw();
-    drawObstacles();
-    drawCoins();
-    drawSwordSwing(); // Draw sword swing if active
+    for (const o of obstacles) o.draw();
+    for (const c of coins) c.draw();
+    for (const b of bosses) b.draw();
+    if (isSwordSwinging) {
+        ctx.fillStyle = "rgba(255,255,0,0.5)";
+        ctx.fillRect(player.x + player.width - scrollOffset, player.y, 50, player.height);
+    }
+    drawShadow();
 }
 
-// Set the game loop interval (e.g., 60 FPS = 1000ms / 60 ≈ 16ms)
-const gameLoopInterval = 16; // Approximately 60 FPS
+function drawShadow() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.beginPath();
+    ctx.ellipse(player.x - scrollOffset + player.width / 2, canvas.height - 5, player.width / 2, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function checkCollision(a, b) {
+    return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    );
+}
+
+function gameOver() {
+    isPaused = true;
+    isGameOver = true;
+    messageDiv.innerText = `Game Over! Your score: ${score}`;
+    messageDiv.style.color = "red";
+    messageDiv.style.fontSize = "30px";
+    keys = {};
+}
 
 function gameLoop() {
-    // Disable pause/unpause logic if the game is over
+    console.log("x: " + player.x);
+    console.log("so: " + scrollOffset);
     if (!isGameOver) {
         if (keys["Escape"] && !isEscapePressed) {
-            isPaused = !isPaused; // Toggle pause state
-            messageDiv.innerText = isPaused ? "Game Paused" : ""; // Show/hide pause message
-            isEscapePressed = true; // Mark Escape as pressed
-        } else if (!keys["Escape"]) {
-            isEscapePressed = false; // Reset when Escape is released
-        }
-    }
+            isPaused = !isPaused;
+            messageDiv.innerText = isPaused ? "Game Paused" : "";
+            isEscapePressed = true;
+        } else if (!keys["Escape"]) isEscapePressed = false;
 
-    // Continue the game loop if not paused and the game is not over
-    if (!isPaused && !isGameOver) {
-        update();
-        draw();
-        updateScore();
-        updateMoneyDisplay(); // Update money display
+        if (!isPaused) {
+            update();
+            draw();
+            scoreDisplay.innerText = `Score: ${score}`;
+            moneyDisplay.innerText = `Gold: ${money}`;
+        }
     }
 }
 
-// Start the game loop using setInterval
-setInterval(gameLoop, gameLoopInterval);
+setInterval(() => {
+    if (!isPaused) {
+        const height = Math.random() * 50 + 20;
+        const width = Math.random() * 30 + 20;
+        const y = canvas.height - height - 10;
+        const x = player.x + canvas.width + Math.random() * 200;
+        obstacles.push(new Obstacle(x, y, width, height));
+    }
+}, 2000);
 
+setInterval(() => {
+    if (!isPaused) {
+        const size = Math.random() * 10 + 5;
+        const x = player.x + canvas.width + Math.random() * 300;
+        const y = canvas.height - Math.random() * 100 - size - 10;
+        coins.push(new Coin(x, y, size));
+    }
+}, 3000);
 
+setInterval(gameLoop, 16);
