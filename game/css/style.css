@@ -40,6 +40,15 @@ body {
     color: white;
 }
 
+/* Styling for the money display */
+#moneyDisplay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    color: white;
+}
+
 /* Styling for the game over message */
 #message {
     position: absolute;
