@@ -7,6 +7,7 @@ window.addEventListener("load", function () {
      */
     function saveNameAndPassword(response) {
         if (response === true) {
+            error.innerHTML = "saved";
             localStorage.userName = userName.value; // saves the userName in local storage
             localStorage.password = password.value; // saves the password in local storage
         }

@@ -6,27 +6,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="js/signUpScript.js"></script>
-    <link rel="stylesheet" href="../MainMenu/css/menuStyle.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div id="menu">
-        <div id="header">
+    <div id="form">
             <h1>Sign Up</h1>
-        </div>
-        <div id="body">
+            <div class = "inputBox">
             <p>Enter User Name:</p>
             <input type="text" id="userName">
+            </div>
+            <div class = "inputBox">
             <p>Enter Password:</p>
             <input type="password" id="password" >
+            </div>
+            <div class = "inputBox">
             <p>Enter Password Again:</p>
             <input type="password" id="confirmPassword" >
+            </div>
             <p id="error"></p>
-            <input type="button" id="confirm" value="Confirm">
+            <input type="button" class="menu-button" id="confirm" value="Confirm">
             <h1 id="message"></h1>
-        </div>
         <a href="../MainMenu/index.php" class="button">Back to Menu</a>
-
     </div>
 </body>
 
