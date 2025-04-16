@@ -38,14 +38,36 @@ class Entity {
         ctx.fillStyle = "lime";
         ctx.fillRect(this.x - scrollOffset, this.y - 10, barWidth * healthPercent, barHeight);
     }
-
+    
     draw() {
         ctx.fillStyle = "blue";
         ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
         this.drawHealthBar();
     }
 }
+//music and skin
+const selectedSkin = localStorage.getItem("selectedSkin") || "default";
+const skinMusicMap = {
+    default: "main.mp3",
+    golden: "main.mp3",
+    exGolden: "main.mp3",
+    what: "about.mp3"
+};
+const musicFile = skinMusicMap[selectedSkin];
+let bgm = null;
+if (musicFile) {
+    bgm = new Audio(`music/${musicFile}`);
+    bgm.loop = true;
+    bgm.volume = 0.5;
+    bgm.play().catch(e => {
+        console.warn("Music autoplay was blocked by browser:", e);
+    });
+}
+const baseScrollSpeed = 3;
 
+let frameIndex = 0;
+let frameTimer = 0;
+const frameSpeed = 10;
 class Player extends Entity {
     constructor(x, y, width, height) {
         super(x, y, width, height, 5);
@@ -54,14 +76,41 @@ class Player extends Entity {
         this.gravity = 0.5;
         this.jumpStrength = -10;
         this.grounded = false;
+        this.deadImage = new Image();
+        this.deadImage.src = `../MainMenu/images/skins/dead.png`;
+        const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
+        this.speed = speedUpgrade ? 9 : 5;
+
+        const skinType = localStorage.getItem("selectedSkin") || "default";
+        this.frames = [];
+        for (let i = 1; i <= 3; i++) {
+            const img = new Image();
+            img.src = `../MainMenu/images/skins/${skinType}_${i}.png`;
+            this.frames.push(img);
+        }
+
+        this.frameIndex = 0;
+        this.frameTimer = 0;
     }
 
     update() {
+        
+        // Check if player is dead
+        this.isDead = false;
+        if (this.hp <= 0) {
+            this.isDead = true;
+            gameOver();
+        }
+        // 
         if (!this.grounded) this.dy += this.gravity;
 
         this.y += this.dy;
         this.x += this.dx;
-
+        this.x += baseScrollSpeed;
+        if (this.x > scrollOffset + 150*3) {
+            this.x = scrollOffset + 150*3;
+        }
+        
         if (this.y + this.height >= canvas.height - 10) {
             this.y = canvas.height - 10 - this.height;
             this.dy = 0;
@@ -76,13 +125,13 @@ class Player extends Entity {
         }
 
         if (keys["ArrowLeft"] || keys["a"] && this.x > 0) {
-            this.dx = -5;
+            this.dx = -this.speed;
             if (this.x < scrollOffset + 100 && scrollOffset > 0) {
                 scrollOffset += this.dx;
                 this.dx = 0;
             }
         } else if (keys["ArrowRight"] || keys["d"]) {
-            this.dx = 5;
+            this.dx = this.speed;
             if (this.x > scrollOffset + canvas.width - 400) {
                 scrollOffset += this.dx;
                 this.dx = 0;
@@ -95,8 +144,17 @@ class Player extends Entity {
     }
 
     draw() {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        if (this.isDead) {
+            ctx.drawImage(this.deadImage, this.x - scrollOffset, this.y, this.width, this.height);
+        } else {
+            ctx.drawImage(this.frames[this.frameIndex], this.x - scrollOffset, this.y, this.width, this.height);
+    
+            this.frameTimer++;
+            if (this.frameTimer >= frameSpeed) {
+                this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+                this.frameTimer = 0;
+            }
+        }
         this.drawHealthBar();
     }
 }
@@ -172,7 +230,6 @@ class Boss extends Entity {
         this.drawHealthBar();
     }
 }
-
 // === Game Entities ===
 const player = new Player(100, canvas.height - 40, 30, 30);
 const obstacles = [];
@@ -223,13 +280,17 @@ function update() {
     if (score > 0 && score % 10000 === 0 && bosses.length === 0) {
         bosses.push(new Boss(player.x + 400, canvas.height - 80));
     }
-
+    scrollOffset += baseScrollSpeed;
     player.update();
 
     for (let i = obstacles.length - 1; i >= 0; i--) {
         if (!obstacles[i].update()) obstacles.splice(i, 1);
         else if (checkSwordCollision(obstacles[i])) obstacles[i].hp--;
-        else if (checkCollision(player, obstacles[i])) player.hp--;
+        else if (checkCollision(player, obstacles[i])) {
+            const hasShield = localStorage.getItem("upgrade_shield") === "1";
+            const damage = hasShield ? 0.5 : 1;
+            player.hp -= damage;
+        }
     }
 
     for (let i = coins.length - 1; i >= 0; i--) {
@@ -305,6 +366,10 @@ function gameOver() {
     messageDiv.style.color = "red";
     messageDiv.style.fontSize = "30px";
     keys = {};
+    if (bgm && !bgm.paused) {
+        bgm.pause();
+        bgm.currentTime = 0;
+    }
 }
 
 function gameLoop() {
