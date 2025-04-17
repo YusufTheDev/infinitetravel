@@ -148,7 +148,7 @@ class Player extends Entity {
             ctx.drawImage(this.deadImage, this.x - scrollOffset, this.y, this.width, this.height);
         } else {
             ctx.drawImage(this.frames[this.frameIndex], this.x - scrollOffset, this.y, this.width, this.height);
-    
+            //test
             this.frameTimer++;
             if (this.frameTimer >= frameSpeed) {
                 this.frameIndex = (this.frameIndex + 1) % this.frames.length;
