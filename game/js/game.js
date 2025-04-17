@@ -46,7 +46,7 @@ class Entity {
     }
 }
 //music and skin
-const selectedSkin = localStorage.getItem("selectedSkin");
+const selectedSkin = localStorage.getItem("selectedSkin") || "default";
 const skinMusicMap = {
     default: "main.mp3",
     golden: "main.mp3",
@@ -81,7 +81,7 @@ class Player extends Entity {
         this.deadImage.src = `../MainMenu/images/skins/dead.png`;
         const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
         this.speed = speedUpgrade ? 9 : 5;
-        const skinType = localStorage.getItem("selectedSkin");
+        const skinType = localStorage.getItem("selectedSkin") || "default";
         this.frames = [];
         for (let i = 1; i <= 3; i++) {
             const img = new Image();
