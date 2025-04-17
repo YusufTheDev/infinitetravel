@@ -81,7 +81,7 @@ class Player extends Entity {
         this.deadImage.src = `../MainMenu/images/skins/dead.png`;
         const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
         this.speed = speedUpgrade ? 9 : 5;
-        const skinType = localStorage.getItem("selectedSkin") || "default";
+        const skinType = localStorage.getItem("selectedSkin");
         this.frames = [];
         for (let i = 1; i <= 3; i++) {
             const img = new Image();
