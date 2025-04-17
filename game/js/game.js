@@ -46,7 +46,7 @@ class Entity {
     }
 }
 //music and skin
-const selectedSkin = localStorage.getItem("selectedSkin") || "default";
+const selectedSkin = localStorage.getItem("selectedSkin");
 const skinMusicMap = {
     default: "main.mp3",
     golden: "main.mp3",
