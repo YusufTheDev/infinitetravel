@@ -51,7 +51,8 @@ const skinMusicMap = {
     default: "main.mp3",
     golden: "main.mp3",
     exGolden: "main.mp3",
-    what: "about.mp3"
+    what: "about.mp3",
+    big: "big.mp3"
 };
 const musicFile = skinMusicMap[selectedSkin];
 let bgm = null;
@@ -80,7 +81,6 @@ class Player extends Entity {
         this.deadImage.src = `../MainMenu/images/skins/dead.png`;
         const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
         this.speed = speedUpgrade ? 9 : 5;
-
         const skinType = localStorage.getItem("selectedSkin") || "default";
         this.frames = [];
         for (let i = 1; i <= 3; i++) {
@@ -88,7 +88,6 @@ class Player extends Entity {
             img.src = `../MainMenu/images/skins/${skinType}_${i}.png`;
             this.frames.push(img);
         }
-
         this.frameIndex = 0;
         this.frameTimer = 0;
     }
@@ -118,7 +117,6 @@ class Player extends Entity {
         } else {
             this.grounded = false;
         }
-
         if ((keys["ArrowUp"] || keys["w"]) && this.grounded) {
             this.dy = this.jumpStrength;
             this.grounded = false;
@@ -148,7 +146,7 @@ class Player extends Entity {
             ctx.drawImage(this.deadImage, this.x - scrollOffset, this.y, this.width, this.height);
         } else {
             ctx.drawImage(this.frames[this.frameIndex], this.x - scrollOffset, this.y, this.width, this.height);
-            //test
+    
             this.frameTimer++;
             if (this.frameTimer >= frameSpeed) {
                 this.frameIndex = (this.frameIndex + 1) % this.frames.length;
