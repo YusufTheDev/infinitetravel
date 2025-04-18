@@ -16,7 +16,12 @@ function signUp($dbh, $stmt, $userName, $password, $bestScore)
 
     //check if success
     if ($success) {
-        $_SESSION["userName"] = $userName;
+        $row = $stmt->fetch();
+
+        //login the user
+        $_SESSION["userName"] = $row["userName"];
+        $_SESSION["bestScore"] = $row["bestScore"];
+        $_SESSION["gold"] = $row["gold"];
         echo ("Sign up successful. Username: " . $_SESSION["userName"]);
         //set the session variables
     } else {
@@ -47,7 +52,7 @@ $success = $stmt->execute($args);
 
 //check if success
 if ($success) {
-    signUp($dbh, $stmt, $userName, password_hash($password,PASSWORD_DEFAULT) , $bestScore);
+    signUp($dbh, $stmt, $userName, password_hash($password, PASSWORD_DEFAULT), $bestScore);
 } else {
     echo ("Fail to execute the command.");
     session_destroy();

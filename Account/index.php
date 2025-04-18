@@ -25,6 +25,10 @@ $isLoggedIn = isset($_SESSION['userName']);
         //check if the user is logged in
         if ($isLoggedIn) {
             echo "<h2>" . $_SESSION['userName'] . "</h2>";
+            echo "<div id = gold>";
+            echo "<img class = 'img' src='img/gold.png'>";
+            echo "<p>" . $_SESSION["gold"] ."</p>";
+            echo "</div>";
             echo "<a href='../MainMenu/index.php' class='button'>Change password</a>";
             echo "<a href='../MainMenu/index.php' class='button'>Back to Menu</a>";
         } else {

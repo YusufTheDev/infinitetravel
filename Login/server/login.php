@@ -25,6 +25,8 @@ function login($stmt, $password)
 
     //login the user
     $_SESSION["userName"] = $row["userName"];
+    $_SESSION["bestScore"] = $row["bestScore"];
+    $_SESSION["gold"] = $row["gold"];
     echo("true");
 }
 

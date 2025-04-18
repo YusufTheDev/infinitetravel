@@ -39,11 +39,11 @@ body {
 }
 
 .button {
-    font-size: 1.5vw;
+    font-size: 1.3vw;
     color: white;
     background-color: #2684e9;
     width: 20% ;
-    height: 4vw;
+    height: 3vw;
     border: none;
     border-radius: 5px;
     text-decoration: none;
@@ -53,4 +53,19 @@ body {
     cursor: pointer;
     display: inline-block;
     margin: 2% 40%;
+}
+
+#gold{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5%;
+    .img{
+        width: 5%;
+        height: 5%;
+        margin: 0 2%;
+    }
+    p{
+        font-size : 2vw;
+    }
 }
