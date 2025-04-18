@@ -2,8 +2,8 @@
 try {
     $dbh = new PDO(
         "mysql:host=localhost;dbname=het33_db",
-        "het33",
-        "HTYhty241632"
+        "root",
+        ""
     );
 } catch (Exception $e) {
     die("ERROR: Couldn't connect. {$e->getMessage()}");

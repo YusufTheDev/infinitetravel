@@ -29,7 +29,7 @@ $isLoggedIn = isset($_SESSION['userName']);
             echo "<img class = 'img' src='img/gold.png'>";
             echo "<p>" . $_SESSION["gold"] ."</p>";
             echo "</div>";
-            echo "<a href='../MainMenu/index.php' class='button'>Change password</a>";
+            echo "<a href='ChangePassword/index.html' class='button'>Change password</a>";
             echo "<a href='../MainMenu/index.php' class='button'>Back to Menu</a>";
         } else {
             echo 'Fail to load account page';
