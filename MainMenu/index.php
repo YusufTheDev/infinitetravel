@@ -27,7 +27,7 @@ $isLoggedIn = isset($_SESSION['userName']);
             echo '<a href="../game/play.html" class="button">Play</a>';
             echo '<a href="upgrades.html" class="button">Upgrades</a>';
             echo '<a href="instructions.html" class="button">Tutorial</a>';
-            echo '<a href="account.html" class="button">Account</a>';
+            echo '<a href="../Account/index.php" class="button">Account</a>';
             echo '<button id="logout">Logout</button>';
         } else {
             echo '<a href="../SignUp/index.html" class="button">Sign Up</a>';
