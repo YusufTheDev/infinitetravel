@@ -85,6 +85,10 @@ class Player extends Entity {
         this.speed = speedUpgrade ? 9 : 5;
         const skinType = localStorage.getItem("selectedSkin") || "default";
         this.frames = [];
+
+        this.extraJumpUsed = false; // Double jump for exGolden skin
+        this.allowDoubleJump = (localStorage.getItem("selectedSkin") === "exGolden");
+        
         for (let i = 1; i <= 3; i++) {
             const img = new Image();
             img.src = `images/skins/${skinType}_${i}.png`;
@@ -119,9 +123,20 @@ class Player extends Entity {
         } else {
             this.grounded = false;
         }
-        if ((keys["ArrowUp"] || keys["w"]) && this.grounded) {
-            this.dy = this.jumpStrength;
-            this.grounded = false;
+        //double jump
+        if ((keys["ArrowUp"] || keys["w"]) && !this.jumpPressed) {
+            if (this.grounded) {
+                this.dy = this.jumpStrength;
+                this.grounded = false;
+                this.extraJumpUsed = false; // double jump reset
+            } else if (this.allowDoubleJump && !this.extraJumpUsed) {
+                this.dy = this.jumpStrength;
+                this.extraJumpUsed = true;
+            }
+            this.jumpPressed = true;
+        }
+        if (!(keys["ArrowUp"] || keys["w"])) {
+            this.jumpPressed = false;
         }
 
         if (keys["ArrowLeft"] || keys["a"] && this.x > 0) {
