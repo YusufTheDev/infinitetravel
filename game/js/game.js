@@ -47,6 +47,8 @@ class Entity {
 }
 //music and skin
 const selectedSkin = localStorage.getItem("selectedSkin") || "default";
+const swordImg = new Image();
+swordImg.src = `images/img/attack_${selectedSkin}.png`;
 const skinMusicMap = {
     default: "main.mp3",
     golden: "main.mp3",
@@ -247,6 +249,7 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => (keys[e.key] = false));
 
 // === Sword Mechanics ===
+
 function swordAttack() {
     if (!canSwing) return;
     isSwordSwinging = true;
@@ -335,8 +338,12 @@ function draw() {
     for (const c of coins) c.draw();
     for (const b of bosses) b.draw();
     if (isSwordSwinging) {
-        ctx.fillStyle = "rgba(255,255,0,0.5)";
-        ctx.fillRect(player.x + player.width - scrollOffset, player.y, 50, player.height);
+        const swordX = player.x + player.width - scrollOffset;
+        const swordY = player.y;
+        const swordWidth = 50;
+        const swordHeight = player.height;
+        
+        ctx.drawImage(swordImg, swordX, swordY, swordWidth, swordHeight);
     }
     drawShadow();
 }
