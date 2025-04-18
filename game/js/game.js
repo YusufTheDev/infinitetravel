@@ -78,14 +78,14 @@ class Player extends Entity {
         this.jumpStrength = -10;
         this.grounded = false;
         this.deadImage = new Image();
-        this.deadImage.src = `../MainMenu/images/skins/dead.png`;
+        this.deadImage.src = `../images/skins/dead.png`;
         const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
         this.speed = speedUpgrade ? 9 : 5;
         const skinType = localStorage.getItem("selectedSkin") || "default";
         this.frames = [];
         for (let i = 1; i <= 3; i++) {
             const img = new Image();
-            img.src = `../MainMenu/images/skins/${skinType}_${i}.png`;
+            img.src = `../images/skins/${skinType}_${i}.png`;
             this.frames.push(img);
         }
         this.frameIndex = 0;
