@@ -69,3 +69,11 @@ body {
         font-size : 2vw;
     }
 }
+
+#bestScore{
+    justify-content: center;
+    align-items: center;
+    p{
+        font-size : 2vw;
+    }
+}

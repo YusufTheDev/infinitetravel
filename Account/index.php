@@ -12,7 +12,7 @@ $isLoggedIn = isset($_SESSION['userName']);
     <title>Infinite Travel - Main Menu</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style2.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="js/script.js"></script>
 </head>
 
@@ -28,6 +28,9 @@ $isLoggedIn = isset($_SESSION['userName']);
             echo "<div id = gold>";
             echo "<img class = 'img' src='img/gold.png'>";
             echo "<p>" . $_SESSION["gold"] ."</p>";
+            echo "</div>";
+            echo "<div id = bestScore>";
+            echo "<p>Best Score: " . $_SESSION["bestScore"] . "</p>";
             echo "</div>";
             echo "<a href='ChangePassword/index.html' class='button'>Change password</a>";
             echo "<a href='../MainMenu/index.php' class='button'>Back to Menu</a>";
