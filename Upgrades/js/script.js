@@ -1,49 +1,37 @@
-let gold = 10000;//just to test
-const upgradesBought = {
-  speed: false,
-  shield: false
-};
-const unlockedSkins = JSON.parse(localStorage.getItem("unlockedSkins") || "[]");
-function buySkin(skinName, cost) {
-    if (unlockedSkins.includes(skinName)) {
-      alert("Already unlocked. Just select it.");
-      selectSkin(skinName);
-      return;
-    }
-    if (gold < cost) {
-      alert("Not enough gold.");
-      return;
-    }
-    gold -= cost;
-    document.getElementById("goldAmount").innerText = gold;
-  
-    unlockedSkins.push(skinName);
-    localStorage.setItem("unlockedSkins", JSON.stringify(unlockedSkins));
-    selectSkin(skinName);
-    alert(`${skinName} skin unlocked and selected!`);
-}
-function selectSkin(skinName) {
-    localStorage.setItem("selectedSkin", skinName);
-}
-
-
-function buyUpgrade(type, cost) {
-  if (gold < cost || upgradesBought[type]) return;
-
-  gold -= cost;
-  document.getElementById("goldAmount").innerText = gold;
-  upgradesBought[type] = true;
-
-  localStorage.setItem(`upgrade_${type}`, "1");
-
-  const btn = document.querySelector(`button[onclick*="${type}"]`);
-  btn.innerText = "Purchased";
-  btn.disabled = true;
-  btn.classList.add("upgraded");
-}
 
 window.addEventListener("load", function () {
+  class Upgrade {
+    constructor(name, status) {
+      this.name = name;
+      this.status = status;
+      this.element = document.getElementById(name);
+    }
+
+    print(){
+      console.log(this.name + " " + this.status);
+    }
+
+  }
+
+  function loadUpgrades() {
+    let upgrades = [];
+    url = "server/loadUpgrades.php";
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach((upgrade) => {
+          upgrades.push(new Upgrade(upgrade.name, upgrade.status));
+        });
+        return upgrades;
+      })
+      .catch((error) => console.log(error));
+  }
+
   let logout = document.getElementById("logout");
+  let upgrades = loadUpgrades();
+  for (let i = 0; i < upgrades.length; i++) {
+    upgrades[i].print();
+  }
 
   if (logout) {
     logout.addEventListener("click", function () {
@@ -51,4 +39,6 @@ window.addEventListener("load", function () {
       location.reload();
     });
   }
+
+
 });

@@ -23,11 +23,12 @@ function login($stmt, $password)
         return;
     }
 
-    //login the user
-    $_SESSION["userName"] = $row["userName"];
-    $_SESSION["bestScore"] = $row["bestScore"];
-    $_SESSION["gold"] = $row["gold"];
-    echo("true");
+    //get all the data
+    $data = ["userName", "bestScore", "gold", "speedBoost", "moreHp", "default", "golden", "exGolden", "promax", "mew", "what", "big", "skin"];
+    foreach($data as $i) {
+        $_SESSION[$i] = $row[$i];
+    }
+    echo ("true");
 }
 
 //start session

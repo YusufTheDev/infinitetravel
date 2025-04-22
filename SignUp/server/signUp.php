@@ -17,7 +17,7 @@ include "../../Connect/connectServer.php";
 $command = "INSERT INTO userInformation (userName, password,bestScore) VALUES (?, ?,?)";
 $stmt = $dbh->prepare($command);
 //execute the command
-$args = [$userName,password_hash($password,PASSWORD_DEFAULT), $bestScore];
+$args = [$userName, password_hash($password, PASSWORD_DEFAULT), $bestScore];
 $success = $stmt->execute($args);
 
 //check if success
@@ -34,10 +34,11 @@ if ($success) {
     if ($success) {
         $row = $stmt->fetch();
 
-        //login the user
-        $_SESSION["userName"] = $row["userName"];
-        $_SESSION["bestScore"] = $row["bestScore"];
-        $_SESSION["gold"] = $row["gold"];
+        //get all the data
+        $data = ["userName", "bestScore", "gold", "speedBoost", "moreHp", "default", "golden", "exGolden", "promax", "mew", "what", "big", "skin"];
+        foreach ($data as $i) {
+            $_SESSION[$i] = $row[$i];
+        }
         echo ("Sign up successful. Username: " . $_SESSION["userName"]);
     } else {
         echo ("Fail to get user.");
