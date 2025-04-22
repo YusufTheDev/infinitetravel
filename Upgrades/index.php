@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <p><a href="index.php" class="button">Back to Home</a></p>
+    <p><a href="../MainMenu/index.php" class="button">Back to Home</a></p>
   </div>
 
   <script src="js/script.js">
