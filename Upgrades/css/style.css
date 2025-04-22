@@ -1,0 +1,94 @@
+/* General reset and body styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Container styling */
+.container {
+    width: 90%;
+    max-width: 800px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+/* Headings */
+h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+/* Gold display */
+#gold {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+/* Upgrade list layout */
+.upgrade-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap: 20px;
+}
+
+/* Upgrade item cards */
+.upgrade-item {
+    background: #fafafa;
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.upgrade-item h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.upgrade-item p {
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.upgrade-item button,
+.menu-button,
+.button {
+    font-size: 18px;
+    color: white;
+    background-color: #2684e9;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    width: 100%;
+    max-width: 200px;
+}
+
+.upgrade-item button:hover:not(.upgraded),
+.menu-button:hover,
+.button:hover {
+    background-color: #1a5fb4;
+}
+
+.upgraded {
+    background-color: gray !important;
+    color: white !important;
+    cursor: not-allowed !important;
+}
