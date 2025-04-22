@@ -66,6 +66,7 @@ h1 {
 .upgrade-item button,
 .menu-button,
 .button {
+    margin-left: auto; margin-right: auto;
     font-size: 18px;
     color: white;
     background-color: #2684e9;
