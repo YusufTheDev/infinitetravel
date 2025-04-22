@@ -25,7 +25,7 @@ $isLoggedIn = isset($_SESSION['userName']);
         //check if the user is logged in
         if ($isLoggedIn) {
             echo '<a href="../game/play.html" class="button">Play</a>';
-            echo '<a href="upgrades.html" class="button">Upgrades</a>';
+            echo '<a href="../Upgrades/index.php" class="button">Upgrades</a>';
             echo '<a href="instructions.html" class="button">Tutorial</a>';
             echo '<a href="../Account/index.php" class="button">Account</a>';
             echo '<button id="logout">Logout</button>';
