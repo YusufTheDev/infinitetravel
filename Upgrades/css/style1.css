@@ -88,6 +88,10 @@ h1 {
     background-color: #1a5fb4;
 }
 
+#using {
+    background-color: #818891;
+}
+
 .upgraded {
     background-color: gray !important;
     color: white !important;

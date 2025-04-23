@@ -1,7 +1,33 @@
 <?php
 
+function updateSkin($skinName,$args)
+{
+    //connect to the database
+    include "../../Connect/connectServer.php";
+
+    //set original skin to 1
+    //prepare the command
+    $command = "UPDATE userInformation SET `$skinName` = ? WHERE userName = ?";
+    $stmt = $dbh->prepare($command);
+
+    //execute the command
+    $success = $stmt->execute($args);
+
+    //check if success
+    if (!$success) {
+        echo ("Fail to execute the command.");
+        return false;
+    }
+}
+
 function getSkin($skinName)
 {
+    //update old skin 
+    updateSkin($_SESSION['skin'],[1,$_SESSION['userName']]);
+
+    //update new skin 
+    updateSkin($skinName,[2,$_SESSION['userName']]);
+
     //connect to the database
     include "../../Connect/connectServer.php";
 
@@ -28,7 +54,7 @@ function pay($price)
 
     //check if the user has enough money
     if ($_SESSION['gold'] < $price) {
-        echo ("You do not have enough money.");
+        echo ("No enough gold.");
         return false;
     }
 
@@ -46,6 +72,7 @@ function pay($price)
     //check if success
     if ($success) {
         $_SESSION['gold'] -= $price;
+        echo "success";
         return true;
     } else {
         echo ("Fail to execute the command.");

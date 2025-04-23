@@ -4,7 +4,7 @@ session_start();
 
 
 $upgradeNames= ["speedBoost","moreHp","default","golden","exGolden","promax","mew","what","big"];
-$prices = [300,500,0,100,200,200,200,200,200];
+$prices = [1300,500,0,100,200,200,200,200,200];
 $descriptions = ["Increase player speed","More HP","Original Skin","A better skin","Double jump","Gliding","A tank","??","????"];
 $upgrades = [];
 for ($i=0; $i<count($upgradeNames); $i++){
