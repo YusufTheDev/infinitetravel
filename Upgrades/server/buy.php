@@ -22,6 +22,11 @@ function updateSkin($skinName,$args)
 
 function getSkin($skinName)
 {
+    //if not skin
+    if($skinName == "speedBoost" || $skinName == "moreHp" ){
+        updateSkin($skinName,[2,$_SESSION['userName']]);
+        return true;
+    }
     //update old skin 
     updateSkin($_SESSION['skin'],[1,$_SESSION['userName']]);
 

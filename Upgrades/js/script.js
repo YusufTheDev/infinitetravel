@@ -4,6 +4,7 @@ window.addEventListener("load", function () {
     constructor(name, type, price, description, status) {
       this.name = name;
       this.type = type;
+      console.log("name "+ name + ",type:"+type);
       this.price = price;
       this.description = description;
       this.status = status;
@@ -74,6 +75,10 @@ window.addEventListener("load", function () {
             if (info === "success") {
               if (this.type === "skin") {
                 switchSkin(this.name);
+              }
+              else{
+                this.status = 2;
+                this.reRender();
               }
             }
             else {
