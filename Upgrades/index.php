@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Player Upgrades</title>
   <link rel="stylesheet" href="css/style1.css" />
-  <script src="js/script.js"> </script>
+  <script src="js/script1.js"> </script>
 </head>
 
 <body id="upgrades">

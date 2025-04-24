@@ -1,6 +1,6 @@
 <?php
 
-function updateSkin($skinName,$args)
+function updateSkinStatus($skinName,$args)
 {
     //connect to the database
     include "../../Connect/connectServer.php";
@@ -16,22 +16,14 @@ function updateSkin($skinName,$args)
     //check if success
     if (!$success) {
         echo ("Fail to execute the command.");
-        return false;
+        die();
     }
+
+    //update session
+    $_SESSION[$skinName] = $args[0];
 }
 
-function getSkin($skinName)
-{
-    //if not skin
-    if($skinName == "speedBoost" || $skinName == "moreHp" ){
-        updateSkin($skinName,[2,$_SESSION['userName']]);
-        return true;
-    }
-    //update old skin 
-    updateSkin($_SESSION['skin'],[1,$_SESSION['userName']]);
-
-    //update new skin 
-    updateSkin($skinName,[2,$_SESSION['userName']]);
+function updateSkin($skinName){
 
     //connect to the database
     include "../../Connect/connectServer.php";
@@ -50,8 +42,25 @@ function getSkin($skinName)
         return true;
     } else {
         echo ("Fail to execute the command.");
-        return false;
+        die();
     }
+}
+
+function getSkin($skinName)
+{
+    //if not skin
+    if($skinName == "speedBoost" || $skinName == "moreHp" ){
+        updateSkinStatus($skinName,[2,$_SESSION['userName']]);
+        return true;
+    }
+    //update old skin 
+    updateSkinStatus($_SESSION['skin'],[1,$_SESSION['userName']]);
+
+    //update new skin 
+    updateSkinStatus($skinName,[2,$_SESSION['userName']]);
+
+    updateSkin($skinName);
+
 }
 
 function pay($price)
@@ -77,11 +86,10 @@ function pay($price)
     //check if success
     if ($success) {
         $_SESSION['gold'] -= $price;
-        echo "success";
         return true;
     } else {
         echo ("Fail to execute the command.");
-        return false;
+        die();
     }
 }
 
@@ -92,7 +100,24 @@ session_start();
 $skinName = filter_input(INPUT_GET, "skinName", FILTER_SANITIZE_SPECIAL_CHARS);
 $price = filter_input(INPUT_GET, "price", FILTER_VALIDATE_INT);
 
+//check if price is received
+if ($price != null) {
+    if (pay($price)) {
+        getSkin($skinName);
+        echo "success";
+    } 
+}
+else{
+    //update old skin 
+    updateSkinStatus($_SESSION['skin'],[1,$_SESSION['userName']]);
 
-if (pay($price)) {
-    getSkin($skinName);
-} 
+    //update new skin 
+    updateSkinStatus($skinName,[2,$_SESSION['userName']]);
+
+    updateSkin($skinName);
+
+    echo "success";
+
+}
+
+

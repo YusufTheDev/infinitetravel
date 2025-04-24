@@ -4,7 +4,6 @@ window.addEventListener("load", function () {
     constructor(name, type, price, description, status) {
       this.name = name;
       this.type = type;
-      console.log("name "+ name + ",type:"+type);
       this.price = price;
       this.description = description;
       this.status = status;
@@ -46,25 +45,23 @@ window.addEventListener("load", function () {
     }
 
     reRender() {
-      this.button.id = "";
+      this.button.removeEventListener("click", () => this.onClick());
+      this.button.id = "none";
+      this.button.disabled = false;
       if (this.status === 0) {
         this.button.innerHTML = "Buy";
       }
       else if (this.status === 1) {
         this.button.innerHTML = "Select";
+        this.button.addEventListener("click", () => this.onClick());
+
       }
       else if (this.status === 2) {
         this.button.innerHTML = "Equiped";
         this.button.id = "using";
         this.button.disabled = true;
       }
-    }
 
-
-    udpdateElement() {
-      if (this.status === 0) {
-
-      }
     }
 
     onClick() {
@@ -75,10 +72,12 @@ window.addEventListener("load", function () {
             if (info === "success") {
               if (this.type === "skin") {
                 switchSkin(this.name);
+                gold.innerHTML = "Gold: " + (parseInt(gold.innerHTML.split(" ")[1]) - this.price);
               }
-              else{
+              else {
                 this.status = 2;
                 this.reRender();
+                gold.innerHTML = "Gold: " + (parseInt(gold.innerHTML.split(" ")[1]) - this.price);
               }
             }
             else {
@@ -87,10 +86,22 @@ window.addEventListener("load", function () {
           })
           .catch((error) => console.log(error));
       }
+      else if (this.status === 1) {
+        url = "server/buy.php?skinName=" + this.name ;
+        fetch(url).then((response) => response.text())
+          .then((info) => {
+            if (info === "success") {
+              switchSkin(this.name);
+            }
+            else {
+              this.button.innerHTML = info;
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+
     }
   }
-
-
 
   function loadUpgrades(upgrades, prices) {
     url = "server/loadUpgrades.php";
@@ -123,7 +134,11 @@ window.addEventListener("load", function () {
     upgrades[newSkin].reRender();
     skin = newSkin;
 
+
   }
+
+
+
 
   function loadInfo(gold, callback) {
     url = "server/loadInfo.php";
