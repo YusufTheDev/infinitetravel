@@ -38,41 +38,16 @@ class Entity {
         ctx.fillStyle = "lime";
         ctx.fillRect(this.x - scrollOffset, this.y - 10, barWidth * healthPercent, barHeight);
     }
-    
+
     draw() {
         ctx.fillStyle = "blue";
         ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
         this.drawHealthBar();
     }
 }
-//music and skin
-const selectedSkin = localStorage.getItem("selectedSkin") || "default";
-const swordImg = new Image();
-swordImg.src = `images/img/attack_${selectedSkin}.png`;
-const skinMusicMap = {
-    default: "main.mp3",
-    golden: "main.mp3",
-    exGolden: "main.mp3",
-    what: "about.mp3",
-    big: "big.mp3"
-};
-const musicFile = skinMusicMap[selectedSkin];
-let bgm = null;
-if (musicFile) {
-    bgm = new Audio(`music/${musicFile}`);
-    bgm.loop = true;
-    bgm.volume = 0.5;
-    bgm.play().catch(e => {
-        console.warn("Music autoplay was blocked by browser:", e);
-    });
-}
-const baseScrollSpeed = 3;
 
-let frameIndex = 0;
-let frameTimer = 0;
-const frameSpeed = 10;
 class Player extends Entity {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height,selectedSkin) {
         super(x, y, width, height, 5);
         this.dy = 0;
         this.dx = 0;
@@ -83,12 +58,12 @@ class Player extends Entity {
         this.deadImage.src = `images/skins/dead.png`;
         const speedUpgrade = localStorage.getItem("upgrade_speed") === "1";
         this.speed = speedUpgrade ? 9 : 5;
-        const skinType = localStorage.getItem("selectedSkin") || "default";
+        const skinType =selectedSkin;
         this.frames = [];
 
         this.extraJumpUsed = false; // Double jump for exGolden skin
-        this.allowDoubleJump = (localStorage.getItem("selectedSkin") === "exGolden");
-        
+        this.allowDoubleJump = (selectedSkin === "exGolden");
+
         for (let i = 1; i <= 3; i++) {
             const img = new Image();
             img.src = `images/skins/${skinType}_${i}.png`;
@@ -99,10 +74,10 @@ class Player extends Entity {
     }
 
     update() {
-        
+
         // Check if player is dead
         this.isDead = false;
-        if (this.hp <= 0) {
+        if (this.hp <= 0 && !this.isDead) {
             this.isDead = true;
             gameOver();
         }
@@ -112,10 +87,10 @@ class Player extends Entity {
         this.y += this.dy;
         this.x += this.dx;
         this.x += baseScrollSpeed;
-        if (this.x > scrollOffset + 150*3) {
-            this.x = scrollOffset + 150*3;
+        if (this.x > scrollOffset + 150 * 3) {
+            this.x = scrollOffset + 150 * 3;
         }
-        
+
         if (this.y + this.height >= canvas.height - 10) {
             this.y = canvas.height - 10 - this.height;
             this.dy = 0;
@@ -155,7 +130,6 @@ class Player extends Entity {
             this.dx = 0;
         }
 
-        if (this.hp <= 0) gameOver();
     }
 
     draw() {
@@ -163,7 +137,7 @@ class Player extends Entity {
             ctx.drawImage(this.deadImage, this.x - scrollOffset, this.y, this.width, this.height);
         } else {
             ctx.drawImage(this.frames[this.frameIndex], this.x - scrollOffset, this.y, this.width, this.height);
-    
+
             this.frameTimer++;
             if (this.frameTimer >= frameSpeed) {
                 this.frameIndex = (this.frameIndex + 1) % this.frames.length;
@@ -245,11 +219,69 @@ class Boss extends Entity {
         this.drawHealthBar();
     }
 }
+// === Game Initialization ===
+async function loadSkin() {
+    const url = "server/loadSkin.php";
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        if (data !== "failed") {
+            return data;
+        } else {
+            console.log("Failed to load skin. Default skin will be used.");
+            return "default";
+        }
+    } catch (error) {
+        console.log(error);
+        return "default";
+    }
+}
+async function initGame() {
+
+    let selectedSkin = await loadSkin();
+
+
+    swordImg = new Image();
+    swordImg.src = `images/img/attack_${selectedSkin}.png`;
+    const skinMusicMap = {
+        default: "main.mp3",
+        golden: "main.mp3",
+        exGolden: "main.mp3",
+        what: "about.mp3",
+        big: "big.mp3"
+    };
+    const musicFile = skinMusicMap[selectedSkin];
+    if (musicFile) {
+        bgm = new Audio(`music/${musicFile}`);
+        bgm.loop = true;
+        bgm.volume = 0.5;
+        bgm.play().catch(e => {
+            console.warn("Music autoplay was blocked by browser:", e);
+        });
+    }
+
+    player = new Player(100, canvas.height - 80, 50, 50, selectedSkin);
+
+    startGame();
+}
+let swordImg = null;
+let bgm = null;
+
+const baseScrollSpeed = 3;
+
+let frameIndex = 0;
+let frameTimer = 0;
+const frameSpeed = 10;
+
 // === Game Entities ===
-const player = new Player(100, canvas.height - 40, 30, 30);
+let player ;
 const obstacles = [];
 const coins = [];
 const bosses = [];
+
+// === Game Initialization ===
+initGame();
+
 
 // === DOM Elements ===
 const scoreDisplay = document.getElementById("scoreDisplay");
@@ -357,7 +389,7 @@ function draw() {
         const swordY = player.y;
         const swordWidth = 50;
         const swordHeight = player.height;
-        
+
         ctx.drawImage(swordImg, swordX, swordY, swordWidth, swordHeight);
     }
     drawShadow();
@@ -379,6 +411,11 @@ function checkCollision(a, b) {
     );
 }
 
+function updateServerData() {
+    url = "server/updateData.php?" + "bestScore=" + score + "&gold=" + money;
+    fetch(url).catch((error) => console.log(error));
+}
+
 function gameOver() {
     isPaused = true;
     isGameOver = true;
@@ -390,11 +427,14 @@ function gameOver() {
         bgm.pause();
         bgm.currentTime = 0;
     }
+
+    updateServerData();
+
 }
 
 function gameLoop() {
-    console.log("x: " + player.x);
-    console.log("so: " + scrollOffset);
+    // console.log("x: " + player.x);
+    // console.log("so: " + scrollOffset);
     if (!isGameOver) {
         if (keys["Escape"] && !isEscapePressed) {
             isPaused = !isPaused;
@@ -411,23 +451,31 @@ function gameLoop() {
     }
 }
 
-setInterval(() => {
-    if (!isPaused) {
-        const height = Math.random() * 50 + 20;
-        const width = Math.random() * 30 + 20;
-        const y = canvas.height - height - 10;
-        const x = player.x + canvas.width + Math.random() * 200;
-        obstacles.push(new Obstacle(x, y, width, height));
-    }
-}, 2000);
+function startGame() {
 
-setInterval(() => {
-    if (!isPaused) {
-        const size = Math.random() * 10 + 5;
-        const x = player.x + canvas.width + Math.random() * 300;
-        const y = canvas.height - Math.random() * 100 - size - 10;
-        coins.push(new Coin(x, y, size));
-    }
-}, 3000);
+    setInterval(() => {
+        if (!isPaused) {
+            const height = Math.random() * 50 + 20;
+            const width = Math.random() * 30 + 20;
+            const y = canvas.height - height - 10;
+            const x = player.x + canvas.width + Math.random() * 200;
+            obstacles.push(new Obstacle(x, y, width, height));
+        }
+    }, 2000);
+    
+    setInterval(() => {
+        if (!isPaused) {
+            const size = Math.random() * 10 + 5;
+            const x = player.x + canvas.width + Math.random() * 300;
+            const y = canvas.height - Math.random() * 100 - size - 10;
+            coins.push(new Coin(x, y, size));
+        }
+    }, 3000);
+    
+    setInterval(gameLoop, 16);
+}
 
-setInterval(gameLoop, 16);
+
+
+
+
