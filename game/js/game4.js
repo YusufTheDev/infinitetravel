@@ -514,11 +514,13 @@ function gameOver() {
     messageDiv.innerText = `Game Over! Your score: ${score}`;
     messageDiv.style.color = "red";
     messageDiv.style.fontSize = "30px";
+    messageDiv.style.opacity = 1;
     keys = {};
     if (bgm && !bgm.paused) {
         bgm.pause();
         bgm.currentTime = 0;
     }
+
 
     updateServerData();
 
@@ -527,13 +529,7 @@ function gameOver() {
 function gameLoop() {
     // console.log("x: " + player.x);
     // console.log("so: " + scrollOffset);
-    if(isPaused || isGameOver){
-        messageDiv.style.opacity = 1;
-    }
-    else{
-        messageDiv.style.opacity = 0;
-
-    }
+   
 
     if (!isGameOver) {
         if (keys["Escape"] && !isEscapePressed) {
@@ -544,7 +540,13 @@ function gameLoop() {
             isEscapePressed = false;
             
         } 
-
+        if(isPaused || isGameOver){
+            messageDiv.style.opacity = 1;
+        }
+        else{
+            messageDiv.style.opacity = 0;
+    
+        }
         
 
         if (!isPaused) {
