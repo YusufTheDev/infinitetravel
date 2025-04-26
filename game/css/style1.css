@@ -33,6 +33,7 @@ body {
     background-color: #e3f2fd; /* Light blue background for consistency */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     overflow: hidden;
+    margin-bottom: 5%;
 }
 
 /* Canvas styling */
@@ -40,7 +41,6 @@ body {
     display: block;
     width: 100%;
     height: 100%;
-    border-radius: 10px;
 }
 
 /* Score and money display styling */
@@ -84,19 +84,18 @@ body {
 
 /* Back to menu button styling */
 .button {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    background-color: #2684e9;
+    font-size: 18px;
     color: white;
-    text-decoration: none;
+    background-color: #2684e9;
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
-    font-size: 16px;
+    text-decoration: none;
     text-align: center;
+    cursor: pointer;
     transition: background-color 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    width: 200px;
 }
 
 .button:hover {

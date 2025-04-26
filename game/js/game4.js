@@ -527,12 +527,25 @@ function gameOver() {
 function gameLoop() {
     // console.log("x: " + player.x);
     // console.log("so: " + scrollOffset);
+    if(isPaused || isGameOver){
+        messageDiv.style.opacity = 1;
+    }
+    else{
+        messageDiv.style.opacity = 0;
+
+    }
+
     if (!isGameOver) {
         if (keys["Escape"] && !isEscapePressed) {
             isPaused = !isPaused;
             messageDiv.innerText = isPaused ? "Game Paused" : "";
             isEscapePressed = true;
-        } else if (!keys["Escape"]) isEscapePressed = false;
+        } else if (!keys["Escape"]){
+            isEscapePressed = false;
+            
+        } 
+
+        
 
         if (!isPaused) {
             update();
