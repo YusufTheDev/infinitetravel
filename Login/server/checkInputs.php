@@ -1,5 +1,7 @@
 <?php
 
+
+
 // get the parameter
 $userName = filter_input(INPUT_GET, "userName", FILTER_SANITIZE_SPECIAL_CHARS);
 $password = filter_input(INPUT_GET, "password", FILTER_SANITIZE_SPECIAL_CHARS);
