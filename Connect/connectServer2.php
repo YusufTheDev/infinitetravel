@@ -1,3 +1,10 @@
+<!-- 
+Author : Tony He 
+Student Number: 400579318
+Date: 2025/04/01
+
+This is php file used to connect to database on school server
+-->
 <?php
 try {
     $dbh = new PDO(
