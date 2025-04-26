@@ -14,7 +14,7 @@ $isLoggedIn = isset($_SESSION['userName']);
     <title>Infinite Travel - Main Menu</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1.css">
     <script src="js/script.js"></script>
 </head>
 
@@ -27,6 +27,7 @@ $isLoggedIn = isset($_SESSION['userName']);
             echo '<a href="../game/play.html" class="button">Play</a>';
             echo '<a href="../Upgrades/index.php" class="button">Upgrades</a>';
             echo '<a href="instructions.html" class="button">Tutorial</a>';
+            echo '<a href="leaderBoard.html" class="button">Leader Board</a>';
             echo '<a href="../Account/index.php" class="button">Account</a>';
             echo '<button id="logout">Logout</button>';
         } else {
