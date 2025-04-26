@@ -1,12 +1,4 @@
-
 <?php
-/**
- * Author : Tony He 
- *Student Number: 400579318
- *Date: 2025/04/02
- *
- *This php file sign up the user by creating new row and a session.
- */
 
 //start session
 session_start();

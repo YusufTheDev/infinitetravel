@@ -1,10 +1,4 @@
-<!-- 
-Author : Yusuf Khan
-Student Number: 400565596
-Date: 2025/04/01
-
-The index page for main menu. Displays different content based on whether user logged in or not.
---> 
+<!-- filepath: c:\Users\yusuf\Documents\McMaster\COMPSCI - 1XD3\Dreamweaver\1XD3-Web-App\infinitetravel\MainMenu\index.php -->
 <?php
 //start the session
 session_start();

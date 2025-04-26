@@ -1,11 +1,3 @@
-/**
-Author : Tony He 
-Student Number: 400579318
-Date: 2025/04/02
-
-Functions of logging in including get the result of input checks from server and sending login requests to server 
-*/
-
 window.addEventListener("load", function () {
 
     /**
@@ -33,15 +25,15 @@ window.addEventListener("load", function () {
             fetch(url)
                 .then(response => response.text()) // retrieves the response text
                 .then(function (response) {
-                    console.log(response);
-                    if (response === "true") {
+
+                    if (response == "true") {
                         //error
                         error.innerHTML = "";
 
                         //jump to main menu
                         window.location.href = "../MainMenu/index.php";
                     }
-                    else {
+                    else{
                         //error
                         error.innerHTML = response;
                     }
@@ -70,7 +62,6 @@ window.addEventListener("load", function () {
         }
     }
 
-    //dom elements
     let userName = document.getElementById("userName");
     let password = document.getElementById("password");
     let confirm = document.getElementById("confirm");
@@ -84,7 +75,6 @@ window.addEventListener("load", function () {
         password.value = localStorage.password;
     }
 
-    //event listeners
     saveInputs.addEventListener("click", function () {
         this.disabled = true;
         let url = "server/checkInputs.php?userName=" + userName.value + "&password=" + password.value;
