@@ -7,7 +7,6 @@ canvas.height = 400;
 
 // === Game State ===
 let scrollOffset = 0;
-let worldSpeed = 3;
 let keys = {};
 let score = 0;
 let money = 0;
@@ -16,7 +15,6 @@ let isGameOver = false;
 let isEscapePressed = false;
 let isSwordSwinging = false;
 let canSwing = true;
-let difficultyTimer = 0;
 
 // === Classes ===
 class Entity {
@@ -27,6 +25,7 @@ class Entity {
         this.height = height;
         this.hp = hp;
         this.maxHp = hp;
+        this.collisionActive = false;
     }
 
     drawHealthBar() {
@@ -47,7 +46,7 @@ class Entity {
 }
 
 class Player extends Entity {
-    constructor(x, y, width, height,selectedSkin) {
+    constructor(x, y, width, height, selectedSkin) {
         super(x, y, width, height, 5);
         this.dy = 0;
         this.dx = 0;
@@ -91,8 +90,8 @@ class Player extends Entity {
             this.x = scrollOffset + 150 * 3;
         }
 
-        if (this.y + this.height >= canvas.height - 10) {
-            this.y = canvas.height - 10 - this.height;
+        if (this.y + this.height >= canvas.height - 60) {
+            this.y = canvas.height - 60 - this.height;
             this.dy = 0;
             this.grounded = true;
         } else {
@@ -150,8 +149,22 @@ class Player extends Entity {
 
 class Obstacle extends Entity {
     constructor(x, y, width, height, hp = 2) {
-        super(x, y, width, height, hp);
+        const scale = 1 + score / 20000; // Scale HP based on score
+        super(x, y, width, height, Math.floor(hp * scale));
         this.gold = Math.floor(Math.random() * 21) + 10;
+        this.damage = 0.05 * scale;
+
+        // Load enemy images
+        this.images = [
+            new Image(),
+            new Image()
+        ];
+        this.images[0].src = "images/img/enemy1.png";
+        this.images[1].src = "images/img/enemy2.png";
+
+        this.frameIndex = 0; // Current frame index
+        this.frameTimer = 0; // Timer to control frame switching
+        this.frameSpeed = 20; // Speed of frame switching
     }
 
     update() {
@@ -163,8 +176,22 @@ class Obstacle extends Entity {
     }
 
     draw() {
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        // Cycle through images
+        this.frameTimer++;
+        if (this.frameTimer >= this.frameSpeed) {
+            this.frameIndex = (this.frameIndex + 1) % this.images.length;
+            this.frameTimer = 0;
+        }
+
+        // Draw the current image
+        ctx.drawImage(
+            this.images[this.frameIndex],
+            this.x - scrollOffset,
+            this.y,
+            this.width,
+            this.height
+        );
+
         this.drawHealthBar();
     }
 }
@@ -175,6 +202,10 @@ class Coin {
         this.y = y;
         this.size = size;
         this.gold = Math.floor(Math.random() * 11) + 5;
+
+        // Load the coin image
+        this.image = new Image();
+        this.image.src = "images/img/coin.png";
     }
 
     update() {
@@ -182,29 +213,39 @@ class Coin {
     }
 
     draw() {
-        ctx.fillStyle = "gold";
-        ctx.beginPath();
-        ctx.arc(this.x - scrollOffset, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        // Draw the coin image
+        ctx.drawImage(
+            this.image,
+            this.x - scrollOffset,
+            this.y,
+            this.size,
+            this.size
+        );
     }
 }
 
 class Boss extends Entity {
     constructor(x, y) {
-        const scale = 1 + score / 10000;
-        super(x, y, 60, 80, Math.floor(10 * scale));
+        const scale = 1 + score / 10000; // Scale HP and damage based on score
+        super(x, y, 120, 160, Math.floor(30 * scale));
         this.gold = 100;
         this.attackCooldown = 0;
+        this.damage = 0.1 * scale; // Increase damage over time
+
+        // Load boss images
+        this.images = [
+            new Image(),
+            new Image()
+        ];
+        this.images[0].src = "images/img/boss1.png";
+        this.images[1].src = "images/img/boss2.png";
+
+        this.frameIndex = 0; // Current frame index
+        this.frameTimer = 0; // Timer to control frame switching
+        this.frameSpeed = 20; // Speed of frame switching
     }
 
     update() {
-        this.attackCooldown++;
-        if (this.attackCooldown >= 60) {
-            this.attackCooldown = 0;
-            if (checkCollision(this, player)) {
-                player.hp--;
-            }
-        }
 
         if (this.hp <= 0) {
             money += this.gold;
@@ -214,8 +255,22 @@ class Boss extends Entity {
     }
 
     draw() {
-        ctx.fillStyle = "purple";
-        ctx.fillRect(this.x - scrollOffset, this.y, this.width, this.height);
+        // Cycle through images
+        this.frameTimer++;
+        if (this.frameTimer >= this.frameSpeed) {
+            this.frameIndex = (this.frameIndex + 1) % this.images.length;
+            this.frameTimer = 0;
+        }
+
+        // Draw the current image
+        ctx.drawImage(
+            this.images[this.frameIndex],
+            this.x - scrollOffset,
+            this.y,
+            this.width,
+            this.height
+        );
+
         this.drawHealthBar();
     }
 }
@@ -260,14 +315,14 @@ async function initGame() {
         });
     }
 
-    player = new Player(100, canvas.height - 80, 50, 50, selectedSkin);
+    player = new Player(100, canvas.height - 30, 50, 50, selectedSkin);
 
     startGame();
 }
 let swordImg = null;
 let bgm = null;
 
-const baseScrollSpeed = 3;
+const baseScrollSpeed = 2;
 
 let frameIndex = 0;
 let frameTimer = 0;
@@ -283,7 +338,6 @@ const bosses = [];
 initGame();
 
 
-// === DOM Elements ===
 const scoreDisplay = document.getElementById("scoreDisplay");
 const moneyDisplay = document.getElementById("moneyDisplay");
 const messageDiv = document.getElementById("message");
@@ -312,35 +366,58 @@ function checkSwordCollision(entity) {
     const swordWidth = swordRange;
     const swordHeight = player.height;
 
-    return (
+    const isColliding = (
         isSwordSwinging &&
         swordX < entity.x + entity.width &&
         swordX + swordWidth > entity.x &&
         swordY < entity.y + entity.height &&
         swordY + swordHeight > entity.y
     );
+
+    if (isColliding && !entity.collisionActive) {
+        entity.hp -= swordDamage; // Apply sword damage
+        entity.collisionActive = true; // Mark collision as active
+    } else if (!isColliding) {
+        entity.collisionActive = false; // Reset collision flag when no collision
+    }
 }
+
+const swordDamage = 1; // Amount of damage the sword deals
 
 // === Game Logic ===
 function update() {
-    difficultyTimer++;
-    if (difficultyTimer % 600 === 0) worldSpeed++;
-    if (score > 0 && score % 10000 === 0 && bosses.length === 0) {
-        bosses.push(new Boss(player.x + 400, canvas.height - 80));
+    // Calculate the player's forward movement
+    const playerMovement = player.dx + baseScrollSpeed;
+
+    // Update score only if the player is moving forward
+    if (playerMovement > 0) {
+        score += playerMovement; // Increase score based on forward movement
     }
+
+    // Update the scroll offset
     scrollOffset += baseScrollSpeed;
+
+    // Update the player
     player.update();
 
+    // Update obstacles
     for (let i = obstacles.length - 1; i >= 0; i--) {
-        if (!obstacles[i].update()) obstacles.splice(i, 1);
-        else if (checkSwordCollision(obstacles[i])) obstacles[i].hp--;
-        else if (checkCollision(player, obstacles[i])) {
-            const hasShield = localStorage.getItem("upgrade_shield") === "1";
-            const damage = hasShield ? 0.5 : 1;
-            player.hp -= damage;
+        if (!obstacles[i].update()) {
+            obstacles.splice(i, 1);
+        } else {
+            checkSwordCollision(obstacles[i]); // Check sword collision
+            if (checkCollision(player, obstacles[i])) {
+                if (!player.collisionActive) {
+                    player.hp -= obstacles[i].damage;
+                    player.collisionActive = true; // Mark collision as active
+                }
+            } else {
+                player.collisionActive = false; // Reset collision flag when no collision
+            }
         }
     }
 
+    // Update coins
     for (let i = coins.length - 1; i >= 0; i--) {
         if (
             player.x < coins[i].x + coins[i].size &&
@@ -353,37 +430,50 @@ function update() {
         }
     }
 
+    // Update bosses
     for (let i = bosses.length - 1; i >= 0; i--) {
-        if (!bosses[i].update()) bosses.splice(i, 1);
-        else if (checkSwordCollision(bosses[i])) bosses[i].hp--;
+        if (!bosses[i].update()) {
+            bosses.splice(i, 1);
+        } else {
+            checkSwordCollision(bosses[i]); // Check sword collision
+            if (checkCollision(player, bosses[i])) {
+                if (!player.collisionActive) {
+                    player.hp -= bosses[i].damage;
+                    player.collisionActive = true; // Mark collision as active
+                }
+            } else {
+                player.collisionActive = false; // Reset collision flag when no collision
+                bosses[i].collisionActive = false; // Reset collision flag for the boss
+            }
+        }
     }
-
-    score++;
 }
 
-function drawBackground() {
-    ctx.fillStyle = "#87CEEB";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#228B22";
-    ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+const backgroundImage = new Image();
+backgroundImage.src = "images/background/background.png";
 
-    // Add clouds or objects to show scrolling
-    ctx.fillStyle = "white";
-    for (let i = 0; i < 5; i++) {
-        const cloudX = (i * 300 - (scrollOffset % 1500)) % 1500;
-        ctx.beginPath();
-        ctx.arc(cloudX, 50, 20, 0, Math.PI * 2);
-        ctx.fill();
-    }
+function drawBackground() {
+    // Calculate the starting x position based on the scroll offset
+    const startX = -(scrollOffset % canvas.width);
+
+    // Draw the background image twice to cover the entire canvas
+    ctx.drawImage(backgroundImage, startX, 0, canvas.width, canvas.height);
+    ctx.drawImage(backgroundImage, startX + canvas.width, 0, canvas.width, canvas.height);
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the background first
     drawBackground();
+
+    // Draw the player and other game elements
     player.draw();
     for (const o of obstacles) o.draw();
     for (const c of coins) c.draw();
     for (const b of bosses) b.draw();
+
+    // Draw the sword if swinging
     if (isSwordSwinging) {
         const swordX = player.x + player.width - scrollOffset;
         const swordY = player.y;
@@ -392,13 +482,15 @@ function draw() {
 
         ctx.drawImage(swordImg, swordX, swordY, swordWidth, swordHeight);
     }
+
+    // Draw the shadow
     drawShadow();
 }
 
 function drawShadow() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.beginPath();
-    ctx.ellipse(player.x - scrollOffset + player.width / 2, canvas.height - 5, player.width / 2, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(player.x - scrollOffset + player.width / 2, canvas.height - 55, player.width / 2, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -457,7 +549,7 @@ function startGame() {
         if (!isPaused) {
             const height = Math.random() * 50 + 20;
             const width = Math.random() * 30 + 20;
-            const y = canvas.height - height - 10;
+            const y = canvas.height - height - 60;
             const x = player.x + canvas.width + Math.random() * 200;
             obstacles.push(new Obstacle(x, y, width, height));
         }
@@ -465,12 +557,20 @@ function startGame() {
     
     setInterval(() => {
         if (!isPaused) {
-            const size = Math.random() * 10 + 5;
+            const size = Math.random() * 20 + 20;
             const x = player.x + canvas.width + Math.random() * 300;
-            const y = canvas.height - Math.random() * 100 - size - 10;
+            const y = canvas.height - Math.random() * 100 - size - 60;
             coins.push(new Coin(x, y, size));
         }
     }, 3000);
+
+    setInterval(() => {
+        if (!isPaused) {
+            const x = player.x + canvas.width + Math.random() * 500;
+            const y = canvas.height - 220; // Fixed position for the boss
+            bosses.push(new Boss(x, y));
+        }
+    }, 15000);
     
     setInterval(gameLoop, 16);
 }
