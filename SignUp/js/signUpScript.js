@@ -1,10 +1,4 @@
-/**
-Author : Tony He 
-Student Number: 400579318
-Date: 2025/04/02
 
-Functions of signing up including get the result of input checks from server and sending sign up requests to server 
-*/
 
 window.addEventListener("load", function () {
 
