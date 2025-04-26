@@ -1,4 +1,12 @@
+
 <?php
+/**
+ * Author : Tony He 
+ *Student Number: 400579318
+ *Date: 2025/04/02
+ *
+ *This php file check if username, password and confirm password are valid, and returns the result
+ */
 
 /**
  * check if the username is already taken.

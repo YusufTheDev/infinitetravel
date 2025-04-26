@@ -1,4 +1,12 @@
+
 <?php
+/**
+ * Author : Tony He 
+ *Student Number: 400579318
+ *Date: 2025/04/02
+ *
+ *This php file check if username and password are valid, and returns the result
+ */
 
 
 
@@ -31,4 +39,3 @@ elseif (strlen($password) < 6  || strlen($password) > 15) {
 else {
     echo ("true");
 }
-

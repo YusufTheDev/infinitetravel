@@ -1,3 +1,10 @@
+<!-- 
+Author : Tony He 
+Student Number: 400579318
+Date: 2025/04/15
+
+php file to get leader info from server and respond to js
+-->
 <?php
 #connect 
 include '../../Connect/connectServer.php';
