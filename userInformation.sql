@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `userinformation`
+-- Table structure for table `userInformation`
 --
 
-CREATE TABLE `userinformation` (
+CREATE TABLE `userInformation` (
   `userName` varchar(20) NOT NULL,
   `password` text NOT NULL,
   `bestScore` bigint(20) NOT NULL DEFAULT 0,
@@ -45,12 +45,12 @@ CREATE TABLE `userinformation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `userinformation`
+-- Dumping data for table `userInformation`
 --
 
-INSERT INTO `userinformation` (`userName`, `password`, `bestScore`, `gold`, `speedBoost`, `moreHp`, `default`, `golden`, `exGolden`, `promax`, `mew`, `what`, `big`, `skin`) VALUES
-('fus41', '$2y$10$1A4yT/NimjI5BOe6wRYfbOF6Sv34ftc/OHnK3o4Hj41Q1TAUN0aKy', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
-('hello', '$2y$10$2aG6F4IrLqoneq9KBxFU7upVD.B.M37ZbtjDNLI3focri9IHLoj86', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
+INSERT INTO `userInformation` (`userName`, `password`, `bestScore`, `gold`, `speedBoost`, `moreHp`, `default`, `golden`, `exGolden`, `promax`, `mew`, `what`, `big`, `skin`) VALUES
+('fus41', '$2y$10$1A4yT/NimjI5BOe6wRYfbOF6Sv34ftc/OHnK3o4Hj41Q1TAUN0aKy', 234, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
+('hello', '$2y$10$2aG6F4IrLqoneq9KBxFU7upVD.B.M37ZbtjDNLI3focri9IHLoj86', 34, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
 ('test1', '$2y$10$2qitUgF/KeJBM/iV7pP4JOpBFvZ8s1QK6drv9m5mEEYCq4b1twCcy', 2000, 988000, 2, 2, 1, 1, 2, 0, 0, 1, 1, 'exGolden'),
 ('testuser1', '$2y$10$QgZoUpm4AeoC.u1EBWRoyenNH1wleJcVzoMQnEB9e3I4asfGXHkqS', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
 ('testuser2', '$2y$10$dXORijuO0EIQyG5R2HZ6auY6NSWaXFqEaW.DQR5kPDwFglTSlYVxi', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 'default'),
@@ -63,9 +63,9 @@ INSERT INTO `userinformation` (`userName`, `password`, `bestScore`, `gold`, `spe
 --
 
 --
--- Indexes for table `userinformation`
+-- Indexes for table `userInformation`
 --
-ALTER TABLE `userinformation`
+ALTER TABLE `userInformation`
   ADD PRIMARY KEY (`userName`);
 COMMIT;
 
