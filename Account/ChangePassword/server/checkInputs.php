@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author: Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/20
+ *
+ * A php file check inputs for changing password. Including old password chech, new password and confirm check.
+ */
 
 /**
  * check if the old password is correct.

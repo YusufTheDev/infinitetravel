@@ -341,6 +341,7 @@ initGame();
 const scoreDisplay = document.getElementById("scoreDisplay");
 const moneyDisplay = document.getElementById("moneyDisplay");
 const messageDiv = document.getElementById("message");
+const goBack = document.getElementById("goBack");
 
 // === Input Events ===
 window.addEventListener("keydown", (e) => {
@@ -514,7 +515,9 @@ function gameOver() {
     messageDiv.innerText = `Game Over! Your score: ${score}`;
     messageDiv.style.color = "red";
     messageDiv.style.fontSize = "30px";
+    goBack.style.display = "block"
     messageDiv.style.opacity = 1;
+
     keys = {};
     if (bgm && !bgm.paused) {
         bgm.pause();
@@ -542,15 +545,18 @@ function gameLoop() {
         } 
         if(isPaused || isGameOver){
             messageDiv.style.opacity = 1;
+            goBack.style.display = "block"
+
         }
         else{
             messageDiv.style.opacity = 0;
+            goBack.style.display = "none"
     
         }
         
 
         if (!isPaused) {
-            update();
+            update();   
             draw();
             scoreDisplay.innerText = `Score: ${score}`;
             moneyDisplay.innerText = `Gold: ${money}`;

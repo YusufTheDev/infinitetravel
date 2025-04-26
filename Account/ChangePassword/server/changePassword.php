@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author: Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/20
+ *
+ * A php file to change password of user in database.
+ */
 
 //start session
 session_start();

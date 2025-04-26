@@ -1,3 +1,10 @@
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/20
+ *
+ * A js file for change password. Including check inputs request and change password request using ajax.
+ */
 window.addEventListener("load", function () {
 
     /**
@@ -35,6 +42,7 @@ window.addEventListener("load", function () {
         }
     }
 
+    //dom element
     let oldPassword = document.getElementById("oldPassword");
     let password = document.getElementById("password");
     let confirmPassword = document.getElementById("confirmPassword");
