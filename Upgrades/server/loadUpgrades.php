@@ -1,5 +1,11 @@
 <?php
-//start the session
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/16
+ *
+ * Load name, price, descriptions and status of upgrade into the page
+ */
 session_start();
 
 

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/16
+ *
+ * A php file to make purchase. Check if gold is enough, buy and get the skin
+ */
 
 function updateSkinStatus($skinName,$args)
 {
@@ -23,6 +30,9 @@ function updateSkinStatus($skinName,$args)
     $_SESSION[$skinName] = $args[0];
 }
 
+/**
+ * update the current using skin in session and db
+ */
 function updateSkin($skinName){
 
     //connect to the database
@@ -46,6 +56,9 @@ function updateSkin($skinName){
     }
 }
 
+/**
+ * make skin purchased db
+ */
 function getSkin($skinName)
 {
     //if not skin
@@ -63,6 +76,9 @@ function getSkin($skinName)
 
 }
 
+/**
+ * pay money
+ */
 function pay($price)
 {
 

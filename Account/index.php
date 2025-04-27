@@ -1,4 +1,12 @@
 <?php
+/**
+ * Author: Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/20
+ *
+ * The accout page. Displays name, best score and golds of user.
+ */
+
 //start the session
 session_start();
 // Check if the user is logged in

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Author: Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/17
+ *
+ * A php file get inputs from game and update gold and bestScore after game is over.
+ */
+
+
 function update($name, $args)
 {
     include "../../Connect/connectServer.php";

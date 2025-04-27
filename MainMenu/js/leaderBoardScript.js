@@ -1,5 +1,16 @@
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/22
+ *
+ * Script file for leader board page. Retreive top 10 players name and score and display on page.
+ */
 window.addEventListener('load', function () {
 
+    /**
+     * get the json including name and best score. Render them on the page.
+     * @param {json} data 
+     */
     function showLeaderboard(data) {
         let table = document.getElementById("board");
         table.innerHTML = "<div class = 'column' id = 'c1'><h1>Name</h1></div><div class = 'column'id = 'c2'><h1>Best Score</h1></div>";
@@ -14,6 +25,9 @@ window.addEventListener('load', function () {
     }
 
 
+    /**
+     * request for name and score of top 10 players
+     */
     function getLeaderboard() {
         url = "server/getLeaderBoard.php";
         fetch(url)

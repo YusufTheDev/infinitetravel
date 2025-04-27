@@ -1,3 +1,10 @@
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * Script file for sign up page. Including new name and password validation checking request    and sign up request.
+ */
 window.addEventListener("load", function () {
 
     /**

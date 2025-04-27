@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * A php receives username and password to check if they are in valid form. Also check if the name already exists.
+ */
 
 /**
  * check if the username is already taken.

@@ -1,4 +1,12 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/22
+ *
+ * Send name and score of top 10 player in db.
+ */
+
 #connect 
 include '../../Connect/connectServer.php';
 

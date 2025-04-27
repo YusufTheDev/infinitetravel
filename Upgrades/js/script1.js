@@ -1,6 +1,17 @@
-
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/16
+ *
+ *  Script of upgrades page. Including display, purchase and select upgrades.
+ */
 window.addEventListener("load", function () {
+  /**
+   * a upgrade object. Has the name of upgrade, whether its a skin or boosts, price of it,
+   *  the description to be displayed on page and whether it's purchased or equipped.
+   */
   class Upgrade {
+
     constructor(name, type, price, description, status) {
       this.name = name;
       this.type = type;
@@ -11,6 +22,9 @@ window.addEventListener("load", function () {
       this.render();
     }
 
+    /**
+     * render the discription, price and buy botton
+     */
     render() {
       let list = document.getElementById("upgradesList");
       let item = document.createElement("div");
@@ -44,6 +58,9 @@ window.addEventListener("load", function () {
       list.appendChild(item);
     }
 
+    /**
+     * update text on the button.
+     */
     reRender() {
       this.button.removeEventListener("click", () => this.onClick());
       this.button.id = "none";
@@ -64,6 +81,9 @@ window.addEventListener("load", function () {
 
     }
 
+    /**
+     * funciton when clicked. Buy or select
+     */
     onClick() {
       if (this.status === 0) {
         url = "server/buy.php?skinName=" + this.name + "&price=" + this.price;
@@ -103,7 +123,11 @@ window.addEventListener("load", function () {
     }
   }
 
-  function loadUpgrades(upgrades, prices) {
+  /**
+   * load all upgrade in db and turn them into upgrade objects.
+   * @param {json} upgrades 
+  */
+  function loadUpgrades(upgrades) {
     url = "server/loadUpgrades.php";
     fetch(url)
       .then((response) => response.json())
@@ -124,6 +148,10 @@ window.addEventListener("load", function () {
       .catch((error) => console.log(error));
   }
 
+  /**
+   * which the skin currently using
+   * @param {string} newSkin 
+   */
   function switchSkin(newSkin) {
 
 
@@ -133,13 +161,13 @@ window.addEventListener("load", function () {
     upgrades[newSkin].status = 2;
     upgrades[newSkin].reRender();
     skin = newSkin;
-
-
   }
 
-
-
-
+  /**
+   * load all info needed
+   * @param {int} gold 
+   * @param {*} callback 
+   */
   function loadInfo(gold, callback) {
     url = "server/loadInfo.php";
     fetch(url)

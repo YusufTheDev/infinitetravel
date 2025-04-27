@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * A php receives username and password to check if they are in valid form.
+ */
 
 // get the parameter
 $userName = filter_input(INPUT_GET, "userName", FILTER_SANITIZE_SPECIAL_CHARS);

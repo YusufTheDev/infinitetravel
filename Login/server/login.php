@@ -1,4 +1,12 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * A php receives username and password to check if they exists in the database. Then log in the user by creating a session.
+ */
+
 
 /**
  * sign up a user.

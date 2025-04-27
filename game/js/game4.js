@@ -1,3 +1,14 @@
+/**
+ * Author :        Yusuf Khan   Shuoheng Fu
+ * Student Number: 400565596    400590015
+ * Date: 2025/04/16
+ *
+ * The game logic implecation. Player controlled by w,a,s,d,space. Avoid or defeat monsters and get coins as you move forward.
+ */
+
+
+window.addEventListener("load",function(event){
+
 // === Canvas Setup ===
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -598,5 +609,6 @@ function startGame() {
 
 
 
+});
 
 

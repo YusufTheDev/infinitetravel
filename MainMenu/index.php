@@ -1,5 +1,12 @@
-<!-- filepath: c:\Users\yusuf\Documents\McMaster\COMPSCI - 1XD3\Dreamweaver\1XD3-Web-App\infinitetravel\MainMenu\index.php -->
 <?php
+/**
+ * Author : Yusuf Khan 
+ * Student Number: 400565596
+ * Date: 2025/04/01
+ *
+ * The main menu page. Show different content based on whether the user logged in or no.
+ */
+
 //start the session
 session_start();
 

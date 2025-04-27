@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author: Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/01
+ *
+ * Connect to school database.
+ */
 try {
     $dbh = new PDO(
         "mysql:host=localhost;dbname=het33_db",

@@ -1,3 +1,10 @@
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * A php receives username and password and check if they are in valid forms.
+ */
 window.addEventListener("load", function () {
 
     /**

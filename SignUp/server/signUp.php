@@ -1,4 +1,11 @@
 <?php
+/**
+ * Author : Tianyan He
+ * Student Number: 400579318
+ * Date: 2025/04/02
+ *
+ * A php receives username and password and creates a new user.
+ */
 
 //start session
 session_start();
