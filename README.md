@@ -18,7 +18,7 @@ InfiniteTravel is a 2D side-scrolling platformer built using HTML5 Canvas and Ja
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -41,5 +41,5 @@ InfiniteTravel is a 2D side-scrolling platformer built using HTML5 Canvas and Ja
   npx live-server
   ```
 
-###Author
+### Author
 Yusuf Khan
